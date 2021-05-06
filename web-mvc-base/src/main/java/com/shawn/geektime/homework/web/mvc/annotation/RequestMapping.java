@@ -1,5 +1,6 @@
 package com.shawn.geektime.homework.web.mvc.annotation;
 
+import com.shawn.geektime.homework.web.mvc.HttpMethod;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +13,7 @@ import java.lang.annotation.Target;
 public @interface RequestMapping {
 
   String value() default "";
+
+  HttpMethod method() default HttpMethod.GET;
 
 }
