@@ -2,17 +2,24 @@ package com.shawn.geektime.homework.web.mvc;
 
 import static java.util.Arrays.asList;
 
+import com.shawn.geektime.homework.web.mvc.annotation.RequestBody;
 import com.shawn.geektime.homework.web.mvc.annotation.RequestMapping;
 import com.shawn.geektime.homework.web.mvc.annotation.Controller;
 import com.shawn.geektime.homework.web.mvc.annotation.ResponseBody;
+import com.shawn.geektime.homework.web.mvc.util.JsonUtil;
+import com.shawn.geektime.homework.web.mvc.view.JspViewResolver;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -22,24 +29,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
 
 public class DispatcherServlet extends HttpServlet {
 
-  /**
-   * ioc container
-   */
+  /** ioc container */
   private final Map<String, Object> beanMappings = new ConcurrentHashMap<>();
 
-  /**
-   * 存储URL对应的方法
-   */
+  /** 存储URL对应的方法 */
   private final Map<String, HandlerMethodInfo> handlerMethodMappings = new ConcurrentHashMap<>();
 
-  /**
-   * 存储URL对应的Bean
-   */
+  /** 存储URL对应的Bean */
   private final Map<String, Object> controllerMappings = new ConcurrentHashMap<>();
+
+  private final ViewResolver viewResolver = new JspViewResolver("/", ".jsp");
 
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -74,6 +78,24 @@ public class DispatcherServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
       return;
     }
+    Method method = methodInfo.getMethod();
+    Parameter[] parameters = method.getParameters();
+    List<Class<?>> types = new ArrayList<>();
+    // S
+    for (Parameter parameter : parameters) {
+      if (parameter.isAnnotationPresent(RequestBody.class)) {
+        Class<?> type = parameter.getType();
+        types.add(type);
+      } else if (parameter.getAnnotations().length == 0) {
+
+      }
+    }
+    Enumeration<String> parameterNames = request.getParameterNames();
+    while (parameterNames.hasMoreElements()) {
+      String parameterName = parameterNames.nextElement();
+      String parameter = request.getParameter(parameterName);
+//      request.getP
+    }
     Class<?>[] parameterTypes = methodInfo.getMethod().getParameterTypes();
     Map<String, String[]> parameterMap = request.getParameterMap();
     Object[] params = new Object[parameterTypes.length];
@@ -89,29 +111,37 @@ public class DispatcherServlet extends HttpServlet {
       }
       if (requestParam.equals("String")) {
         for (Entry<String, String[]> param : parameterMap.entrySet()) {
-          String value = Arrays.toString(param.getValue()).replaceAll("\\[|\\]", "")
-              .replaceAll(",\\s", ",");
+          String value =
+              Arrays.toString(param.getValue()).replaceAll("\\[|\\]", "").replaceAll(",\\s", ",");
+          params[i] = value;
+        }
+      } else {
+        for (Entry<String, String[]> param : parameterMap.entrySet()) {
+          String value =
+              Arrays.toString(param.getValue()).replaceAll("\\[|\\]", "").replaceAll(",\\s", ",");
           params[i] = value;
         }
       }
     }
-    //利用反射机制来调用
+    // 利用反射机制来调用
     try {
-      Method method = methodInfo.getMethod();
+
       Object result = method.invoke(controller, params);
       if (Objects.isNull(result)) {
         log("result is null");
       } else {
         // 如果标记为forward，则执行forward请求
         if (!method.isAnnotationPresent(ResponseBody.class)) {
-          request.getRequestDispatcher((String) result).forward(request, response);
+          request
+              .getRequestDispatcher(viewResolver.resolve(result.toString()))
+              .forward(request, response);
         } else {
           writer = response.getWriter();
-          writer.write(result.toString());
+          writer.write(
+              JsonUtil.toJson(result, (e) -> new SerializationException("json serialize failed")));
         }
       }
     } catch (Exception e) {
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       throw new ServletException(e);
     } finally {
       if (writer != null) {
@@ -121,8 +151,8 @@ public class DispatcherServlet extends HttpServlet {
   }
 
   private void doScanner(String scanPackage) {
-    URL resource = this.getClass().getClassLoader()
-        .getResource("/" + scanPackage.replaceAll("\\.", "/"));
+    URL resource =
+        this.getClass().getClassLoader().getResource("/" + scanPackage.replaceAll("\\.", "/"));
     if (Objects.isNull(resource)) {
       return;
     }
@@ -191,8 +221,8 @@ public class DispatcherServlet extends HttpServlet {
   private Set<HttpMethod> findSupportedHttpMethods(Method method) {
     Set<HttpMethod> supportedHttpMethods = new LinkedHashSet<>();
     for (Annotation annotationFromMethod : method.getAnnotations()) {
-      RequestMapping requestMapping = annotationFromMethod.annotationType()
-          .getAnnotation(RequestMapping.class);
+      RequestMapping requestMapping =
+          annotationFromMethod.annotationType().getAnnotation(RequestMapping.class);
       if (requestMapping != null) {
         supportedHttpMethods.add(requestMapping.method());
       }
