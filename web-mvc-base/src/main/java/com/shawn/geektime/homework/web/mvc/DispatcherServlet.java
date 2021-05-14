@@ -12,12 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,50 +81,41 @@ public class DispatcherServlet extends HttpServlet {
       return;
     }
     Method method = methodInfo.getMethod();
-    Parameter[] parameters = method.getParameters();
-    List<Class<?>> types = new ArrayList<>();
-    // S
-    for (Parameter parameter : parameters) {
-      if (parameter.isAnnotationPresent(RequestBody.class)) {
-        Class<?> type = parameter.getType();
-        types.add(type);
-      } else if (parameter.getAnnotations().length == 0) {
 
-      }
-    }
-    Enumeration<String> parameterNames = request.getParameterNames();
-    while (parameterNames.hasMoreElements()) {
-      String parameterName = parameterNames.nextElement();
-      String parameter = request.getParameter(parameterName);
-//      request.getP
-    }
-    Class<?>[] parameterTypes = methodInfo.getMethod().getParameterTypes();
     Map<String, String[]> parameterMap = request.getParameterMap();
-    Object[] params = new Object[parameterTypes.length];
-    for (int i = 0; i < parameterTypes.length; i++) {
-      String requestParam = parameterTypes[i].getSimpleName();
+    Map<String, String> methodParameter = new HashMap<>();
+    for (Entry<String, String[]> entry : parameterMap.entrySet()) {
+      String parameterName = entry.getKey();
+      String value =
+          Arrays.toString(entry.getValue()).replaceAll("\\[|\\]", "").replaceAll(",\\s", ",");
+      methodParameter.put(parameterName, value);
+    }
+    Parameter[] parameters = method.getParameters();
+    Object[] params = new Object[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      Parameter parameter = parameters[i];
+      String requestParam = parameter.getType().getSimpleName();
       if (requestParam.equals("HttpServletRequest")) {
-        params[i] = request;
+        params[i] = parameter;
         continue;
       }
       if (requestParam.equals("HttpServletResponse")) {
-        params[i] = response;
+        params[i] = parameter;
         continue;
       }
-      if (requestParam.equals("String")) {
-        for (Entry<String, String[]> param : parameterMap.entrySet()) {
-          String value =
-              Arrays.toString(param.getValue()).replaceAll("\\[|\\]", "").replaceAll(",\\s", ",");
-          params[i] = value;
-        }
-      } else {
-        for (Entry<String, String[]> param : parameterMap.entrySet()) {
-          String value =
-              Arrays.toString(param.getValue()).replaceAll("\\[|\\]", "").replaceAll(",\\s", ",");
-          params[i] = value;
-        }
+      if (parameter.isAnnotationPresent(RequestBody.class)) {
+        Class<?> type = parameter.getType();
+        params[i] =
+            JsonUtil.fromJson(
+                    JsonUtil.toJson(methodParameter)
+                        .orElseThrow(() -> new SerializationException("json serialize failed")),
+                    type)
+                .orElseThrow(() -> new SerializationException("json serialize failed"));
+      } else if (parameter.getAnnotations().length == 0) {
+        params[i] = methodParameter.get(parameter.getName());
       }
     }
+
     // 利用反射机制来调用
     try {
 
