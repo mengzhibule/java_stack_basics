@@ -6,9 +6,27 @@
   metadata-complete="true" version="2.5">
 
   <display-name>Archetype Created Web Application</display-name>
+  <filter>
+    <filter-name>CharsetEncodingFilter</filter-name>
+    <filter-class>com.shawn.geektime.homework.web.mvc.filter.CharsetEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>CharsetEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>INCLUDE</dispatcher>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+
   <servlet>
     <servlet-name>dispatcherServlet</servlet-name>
-    <servlet-class>com.shawn.geektime.homework.web.mvc.DispatcherServlet</servlet-class>
+    <servlet-class>com.shawn.geektime.homework.web.mvc.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
