@@ -1,6 +1,5 @@
 package com.shawn.geektime.homework.user.db.util;
 
-import com.sun.istack.internal.Nullable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -57,7 +56,7 @@ public class StatementCreatorUtils {
    * @param javaType the Java type to translate
    * @return the corresponding SQL type
    */
-  public static int javaTypeToSqlParameterType(@Nullable Class<?> javaType) {
+  public static int javaTypeToSqlParameterType(Class<?> javaType) {
     if (javaType == null) {
       return Types.NULL;
     }

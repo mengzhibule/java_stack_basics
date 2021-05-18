@@ -11,12 +11,13 @@
     <module>../user-web</module>
     <module>../web-mvc-base</module>
     <module>../user-repository</module>
+    <module>../user-common</module>
   </modules>
 
   <packaging>pom</packaging>
 
   <properties>
-    <revision>1.0-SNAPSHOT</revision>
+    <user.web.vision>1.0-SNAPSHOT</user.web.vision>
     <file.encoding>UTF-8</file.encoding>
     <project.build.sourceEncoding>${file.encoding}</project.build.sourceEncoding>
 
@@ -44,8 +45,15 @@
 
   <!-- Artifacts 依赖版本管理 -->
   <dependencyManagement>
-
     <dependencies>
+
+<!--      project module-->
+      <dependency>
+        <groupId>com.shawn.geektime.homework</groupId>
+        <artifactId>user-common</artifactId>
+        <version>${user.web.vision}</version>
+      </dependency>
+
       <!-- Servlet 3.1 API -->
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -85,7 +93,7 @@
         <version>${mysql.version}</version>
       </dependency>
 
-<!--      junit-test -->
+      <!--      junit-test -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -93,7 +101,7 @@
         <scope>test</scope>
       </dependency>
 
-<!--      jackson -->
+      <!--      jackson -->
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>

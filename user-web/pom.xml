@@ -22,24 +22,7 @@
     <dependency>
       <groupId>com.shawn.geektime.homework</groupId>
       <artifactId>web-mvc-base</artifactId>
-      <version>${revision}</version>
-    </dependency>
-
-    <!-- Servlet API -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
+      <version>${user.web.vision}</version>
     </dependency>
 
     <dependency>
@@ -48,6 +31,10 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.shawn.geektime.homework</groupId>
+      <artifactId>user-common</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -56,7 +43,6 @@
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.1</version>
         <executions>
           <execution>
             <id>tomcat-run</id>
@@ -68,6 +54,10 @@
             <configuration>
               <!-- ServletContext 路径 -->
               <path>/</path>
+              <enableNaming>true</enableNaming>
+              <tomcatConfigurationFilesDirectory>
+                src/main/webapp/META-INF/conf/
+              </tomcatConfigurationFilesDirectory>
             </configuration>
           </execution>
         </executions>

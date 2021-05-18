@@ -33,8 +33,12 @@ public class JdbcTemplate {
     }
   }
 
-  public void execute(final String sql) {
-    execute(statement -> statement.execute(sql));
+  public <T> T execute(final String sql) {
+    return execute(
+        statement -> {
+          statement.execute(sql);
+          return null;
+        });
   }
 
   public <T> T execute(PreparedStatementCreator psc, PreparedStatementCallback<T> callback) {
@@ -77,10 +81,15 @@ public class JdbcTemplate {
           return preparedStatement;
         },
         statement -> {
-          ResultSet resultSet = statement.executeQuery();
-          List<R> results = new RowMapperResultSetConvertor<>(rowMapper).convert(resultSet);
-          close(resultSet);
-          return results;
+          ResultSet resultSet = null;
+          try {
+            resultSet = statement.executeQuery();
+            return new RowMapperResultSetConvertor<>(rowMapper).convert(resultSet);
+          } catch (SQLException e) {
+            throw new JdbcTemplateException("Unable to map column to java property", e);
+          } finally {
+            close(resultSet);
+          }
         });
   }
 
