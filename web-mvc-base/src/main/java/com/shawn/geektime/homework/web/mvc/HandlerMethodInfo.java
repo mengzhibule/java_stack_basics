@@ -3,9 +3,7 @@ package com.shawn.geektime.homework.web.mvc;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-/**
- * handler method info
- */
+/** handler method info */
 public class HandlerMethodInfo {
 
   private String requestPath;
@@ -14,8 +12,8 @@ public class HandlerMethodInfo {
 
   private Set<HttpMethod> supportedHttpMethods;
 
-  public HandlerMethodInfo(String requestPath, Method method,
-      Set<HttpMethod> supportedHttpMethods) {
+  public HandlerMethodInfo(
+      String requestPath, Method method, Set<HttpMethod> supportedHttpMethods) {
     this.requestPath = requestPath;
     this.method = method;
     this.supportedHttpMethods = supportedHttpMethods;
@@ -41,8 +39,7 @@ public class HandlerMethodInfo {
     return supportedHttpMethods;
   }
 
-  public void setSupportedHttpMethods(
-      Set<HttpMethod> supportedHttpMethods) {
+  public void setSupportedHttpMethods(Set<HttpMethod> supportedHttpMethods) {
     this.supportedHttpMethods = supportedHttpMethods;
   }
 }

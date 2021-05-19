@@ -8,12 +8,19 @@ import java.util.Arrays;
  * @author shawn
  */
 public enum HttpMethod {
-
-  GET, POST, DELETE, PUT, HEAD, OPTIONS, TRACE,
+  GET,
+  POST,
+  DELETE,
+  PUT,
+  HEAD,
+  OPTIONS,
+  TRACE,
   ;
 
   public static HttpMethod toHttpMethod(String method) {
-    return Arrays.stream(values()).filter(httpMethod -> httpMethod.name().equalsIgnoreCase(method))
-        .findFirst().orElse(null);
+    return Arrays.stream(values())
+        .filter(httpMethod -> httpMethod.name().equalsIgnoreCase(method))
+        .findFirst()
+        .orElse(null);
   }
 }

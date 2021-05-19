@@ -8,9 +8,7 @@ public class UserDTO {
 
   private Integer age;
 
-  public UserDTO(){
-
-  }
+  public UserDTO() {}
 
   public UserDTO(Integer id, String name, Integer age) {
     this.id = id;
@@ -41,5 +39,4 @@ public class UserDTO {
   public void setAge(Integer age) {
     this.age = age;
   }
-
 }

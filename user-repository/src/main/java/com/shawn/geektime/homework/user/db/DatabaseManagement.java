@@ -14,6 +14,5 @@ public class DatabaseManagement {
   public static void main(String[] args) throws SQLException {
     Driver driver = new Driver();
     Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-
   }
 }

@@ -1,5 +1,3 @@
 package com.shawn.geektime.homework.user.context;
 
-public class ApplicationContextUtil {
-
-}
+public class ApplicationContextUtil {}

@@ -12,20 +12,19 @@ import com.shawn.geektime.homework.web.mvc.annotation.ResponseBody;
 public class UserController {
 
   @RequestMapping("/test/forward")
-  public String testForward(){
+  public String testForward() {
     return "forward:/user/say/hello";
   }
 
   @RequestMapping("/test/vo")
   @ResponseBody
-  public UserVO testResponseBody(){
+  public UserVO testResponseBody() {
     return new UserVO(1, "shawn", 26);
   }
 
   @RequestMapping("/test/request/body")
   @ResponseBody
-  public UserVO testRequestBody(@RequestBody UserDTO dto){
+  public UserVO testRequestBody(@RequestBody UserDTO dto) {
     return new UserVO(dto.getId(), dto.getName(), dto.getAge());
   }
-
 }
