@@ -5,6 +5,7 @@ import com.shawn.geektime.homework.user.context.JNDIApplicationContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.sql.DataSource;
 
 /**
  * start jndi application context
@@ -21,6 +22,9 @@ public class JNDIApplicationContextListener implements ServletContextListener {
     this.servletContext = sce.getServletContext();
     JNDIApplicationContext context = new JNDIApplicationContext();
     context.init(servletContext);
+    DataSource dataSource = context.getComponent("jdbc/UserPlatformDB");
+    String simpleName = dataSource.getClass().getSimpleName();
+    System.out.println(simpleName);
   }
 
   @Override

@@ -1,4 +1,4 @@
-package com.shawn.geektime.homework.web.mvc.filter;
+package com.shawn.geektime.homework.user.filter;
 
 import java.io.IOException;
 import javax.servlet.Filter;

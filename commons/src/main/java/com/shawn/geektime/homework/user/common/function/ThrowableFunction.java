@@ -1,5 +1,15 @@
-package com.shawn.geektime.home.user.common.function;
+package com.shawn.geektime.homework.user.common.function;
 
+import com.shawn.geektime.homework.user.common.exception.CommonExecuteException;
+
+/**
+ * execute functions that can throw exceptions,extend {@link java.util.function.Function}
+ *
+ * @param <T> argument type
+ * @param <R> returnValue type
+ * @author Shawn
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface ThrowableFunction<T, R> {
 
@@ -20,13 +30,11 @@ public interface ThrowableFunction<T, R> {
    * @throws RuntimeException wrappers {@link Throwable}
    */
   default R execute(T t) throws RuntimeException {
-    R result = null;
     try {
-      result = apply(t);
+      return apply(t);
     } catch (Throwable e) {
-      throw new RuntimeException(e.getCause());
+      throw new CommonExecuteException(e.getCause());
     }
-    return result;
   }
 
   /**

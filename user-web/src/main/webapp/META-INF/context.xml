@@ -13,4 +13,8 @@
     maxIdle="20"
     minIdle="5"
     maxWait="10000"/>
+
+  <Resource name="bean/JdbcTemplate" auth="Container"
+    type="com.shawn.geektime.homework.user.db.JdbcTemplate"
+    factory="org.apache.naming.factory.BeanFactory"/>
 </Context>

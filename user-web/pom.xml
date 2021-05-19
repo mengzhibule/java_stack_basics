@@ -21,8 +21,17 @@
   <dependencies>
     <dependency>
       <groupId>com.shawn.geektime.homework</groupId>
+      <artifactId>user-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.shawn.geektime.homework</groupId>
       <artifactId>web-mvc-base</artifactId>
-      <version>${user.web.vision}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -33,8 +42,9 @@
 
     <dependency>
       <groupId>com.shawn.geektime.homework</groupId>
-      <artifactId>user-common</artifactId>
+      <artifactId>user-repository</artifactId>
     </dependency>
+
   </dependencies>
 
   <build>

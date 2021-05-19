@@ -1,5 +1,6 @@
-package com.shawn.geektime.home.user.common.function;
+package com.shawn.geektime.homework.user.common.function;
 
+import com.shawn.geektime.homework.user.common.exception.CommonExecuteException;
 import java.util.function.Function;
 
 /**
@@ -30,7 +31,7 @@ public interface ThrowableAction {
     try {
       action.execute();
     } catch (Throwable e) {
-      throw new RuntimeException(e);
+      throw new CommonExecuteException(e);
     }
   }
 }

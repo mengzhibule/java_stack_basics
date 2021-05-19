@@ -6,13 +6,18 @@ import com.shawn.geektime.homework.user.db.exception.JdbcTemplateException;
 import com.shawn.geektime.homework.user.db.function.PreparedStatementCreator;
 import com.shawn.geektime.homework.user.db.util.StatementCreatorUtils;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * All SQL operations
@@ -22,14 +27,43 @@ import java.util.Objects;
  */
 public class JdbcTemplate {
 
+  private static final Logger LOGGER = Logger.getLogger(JdbcTemplate.class.getName());
+
   private Connection connection;
 
-  public void connect(String url, String username, String password, String driverClassName) {
+  @Resource private DataSource dataSource;
+
+  public JdbcTemplate() {}
+
+  public JdbcTemplate(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  @PostConstruct
+  public void init() {
+    connect();
+  }
+
+  public void connect() {
+    connect(null, null);
+  }
+
+  public void connect(String username, String password) {
+    if (Objects.isNull(dataSource)) {
+      String message = "Database connection failed, datasource is null";
+      LOGGER.log(Level.SEVERE, message);
+      throw new JdbcTemplateException(message);
+    }
     try {
-      Class.forName(driverClassName);
-      connection = DriverManager.getConnection(url, username, password);
-    } catch (SQLException | ClassNotFoundException e) {
-      throw new JdbcTemplateException(e);
+      if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+        connection = dataSource.getConnection(username, password);
+      } else {
+        connection = dataSource.getConnection();
+      }
+    } catch (SQLException e) {
+      String errorMsg = "Database connection failed, " + e.getMessage();
+      LOGGER.log(Level.SEVERE, errorMsg);
+      throw new JdbcTemplateException(errorMsg, e);
     }
   }
 
@@ -47,7 +81,7 @@ public class JdbcTemplate {
       preparedStatement = psc.createPreparedStatement(connection);
       return callback.doInPreparedStatement(preparedStatement);
     } catch (SQLException e) {
-      throw new JdbcTemplateException("execute PreparedStatement callback function failed: ", e);
+      throw new JdbcTemplateException("preparedStatement callback function failed to execute", e);
     } finally {
       close(preparedStatement);
     }
@@ -59,7 +93,7 @@ public class JdbcTemplate {
       statement = connection.createStatement();
       return callback.doInStatement(statement);
     } catch (SQLException e) {
-      throw new JdbcTemplateException("execute statement callback function failed: ", e);
+      throw new JdbcTemplateException("statement callback function failed to execute", e);
     } finally {
       close(statement);
     }
@@ -130,8 +164,7 @@ public class JdbcTemplate {
       preparedStatement = psc.createPreparedStatement(connection);
       return callback.doInPreparedStatement(preparedStatement);
     } catch (SQLException e) {
-      throw new JdbcTemplateException(
-          "execute DML preparedStatement callback function failed, ", e);
+      throw new JdbcTemplateException("preparedStatement callback function failed to execute", e);
     } finally {
       close(preparedStatement);
     }
@@ -143,7 +176,7 @@ public class JdbcTemplate {
         autoCloseable.close();
       }
     } catch (Exception e) {
-      throw new JdbcTemplateException("close failed!", e);
+      throw new JdbcTemplateException("close failed", e);
     }
   }
 }

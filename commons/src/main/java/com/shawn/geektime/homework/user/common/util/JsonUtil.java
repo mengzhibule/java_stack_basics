@@ -1,4 +1,4 @@
-package com.shawn.geektime.homework.web.mvc.util;
+package com.shawn.geektime.homework.user.common.util;
 
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;

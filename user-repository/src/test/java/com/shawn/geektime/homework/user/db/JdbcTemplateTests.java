@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class JdbcTemplateTests {
 
   private JdbcTemplate jdbcTemplate;
@@ -36,7 +38,7 @@ public class JdbcTemplateTests {
   @Before
   public void test_create_connection() {
     jdbcTemplate = new JdbcTemplate();
-    jdbcTemplate.connect(URL, USERNAME, PASSWORD, DRIVER_CLASS_NAME);
+    jdbcTemplate.connect();
   }
 
   @Test
