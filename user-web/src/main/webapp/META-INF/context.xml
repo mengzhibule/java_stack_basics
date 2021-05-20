@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context>
-  <Resource name="jdbc/UserPlatformDB"
-    global="jdbc/UserPlatformDB"
+  <Resource name="jdbc/datasource"
+    global="jdbc/datasource"
     auth="Container"
     type="javax.sql.DataSource"
     driverClassName="com.mysql.cj.jdbc.Driver"
@@ -14,7 +14,7 @@
     minIdle="5"
     maxWait="10000"/>
 
-  <Resource name="bean/JdbcTemplate" auth="Container"
+  <Resource name="jdbc/template" auth="Container"
     type="com.shawn.geektime.homework.user.db.JdbcTemplate"
     factory="org.apache.naming.factory.BeanFactory"/>
 </Context>

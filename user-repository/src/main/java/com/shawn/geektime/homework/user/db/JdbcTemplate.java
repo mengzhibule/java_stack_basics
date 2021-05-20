@@ -31,13 +31,8 @@ public class JdbcTemplate {
 
   private Connection connection;
 
-  @Resource private DataSource dataSource;
-
-  public JdbcTemplate() {}
-
-  public JdbcTemplate(DataSource dataSource) {
-    this.dataSource = dataSource;
-  }
+  @Resource(name = "jdbc/datasource")
+  private DataSource dataSource;
 
   @PostConstruct
   public void init() {

@@ -10,11 +10,6 @@
     </listener-class>
   </listener>
 
-  <listener>
-    <listener-class>com.shawn.geektime.homework.user.listener.TestingListener
-    </listener-class>
-  </listener>
-
   <display-name>Archetype Created Web Application</display-name>
   <filter>
     <filter-name>CharsetEncodingFilter</filter-name>
@@ -47,7 +42,7 @@
   <resource-ref>
     <description>DB Connection</description>
     <!-- JNDI javax.naming.Name -->
-    <res-ref-name>jdbc/UserPlatformDB</res-ref-name>
+    <res-ref-name>jdbc/datasource</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
@@ -57,7 +52,7 @@
       Object factory for DBConnectionManager instances.
     </description>
     <resource-env-ref-name>
-      bean/JdbcTemplate
+      jdbc/template
     </resource-env-ref-name>
     <resource-env-ref-type>
       com.shawn.geektime.homework.user.db.JdbcTemplate
