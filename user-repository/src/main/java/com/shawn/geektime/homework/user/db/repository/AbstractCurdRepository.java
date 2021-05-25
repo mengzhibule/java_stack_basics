@@ -35,14 +35,17 @@ public abstract class AbstractCurdRepository<T, K> implements CurdRepository<T, 
     builder.append("INSERT INTO ");
     builder.append(tableName);
     builder.append(" (");
+    int size = 0;
     for (Field field : fields) {
       PrimaryKey pk = field.getAnnotation(PrimaryKey.class);
       if (!Objects.isNull(pk)) {
         IdGeneratePolicy policy = pk.policy();
         if (!policy.equals(IdGeneratePolicy.AUTO_INCREMENT)) {
+          size++;
           builder.append(field.getName()).append(",");
         }
       } else {
+        size++;
         builder.append(field.getName()).append(",");
       }
     }
@@ -50,8 +53,8 @@ public abstract class AbstractCurdRepository<T, K> implements CurdRepository<T, 
     builder.append(") ");
     builder.append("VALUES ");
     builder.append("(");
-    for (int i = 0; i < fields.length; i++) {
-      if (i != fields.length - 1) {
+    for (int i = 0; i < size; i++) {
+      if (i != size - 1) {
         builder.append("?,");
       } else {
         builder.append("?");

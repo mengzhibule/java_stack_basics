@@ -23,6 +23,10 @@
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
     <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>

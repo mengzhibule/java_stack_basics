@@ -1,11 +1,17 @@
 package com.shawn.geektime.homework.user.db.entity;
 
 import com.shawn.geektime.homework.user.db.annotation.PrimaryKey;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+@Entity
+@Table
 public class User {
 
   @PrimaryKey private int id;
 
+  @Column
   private String username;
 
   private String password;
