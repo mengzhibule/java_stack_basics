@@ -26,28 +26,52 @@ public class StatementCreatorUtils {
 
   private static final Map<Class<?>, Integer> javaTypeToSqlTypeMap = new HashMap<>(32);
 
+  private static final Map<Class<?>, String> typeMethodMappings = new HashMap<>(32);
+
   static {
     javaTypeToSqlTypeMap.put(boolean.class, Types.BOOLEAN);
+    typeMethodMappings.put(boolean.class, "getBoolean");
     javaTypeToSqlTypeMap.put(Boolean.class, Types.BOOLEAN);
+    typeMethodMappings.put(Boolean.class, "getBoolean");
     javaTypeToSqlTypeMap.put(byte.class, Types.TINYINT);
+    typeMethodMappings.put(byte.class, "getByte");
     javaTypeToSqlTypeMap.put(Byte.class, Types.TINYINT);
+    typeMethodMappings.put(Byte.class, "getByte");
     javaTypeToSqlTypeMap.put(short.class, Types.SMALLINT);
+    typeMethodMappings.put(short.class, "getShort");
     javaTypeToSqlTypeMap.put(Short.class, Types.SMALLINT);
+    typeMethodMappings.put(short.class, "getShort");
     javaTypeToSqlTypeMap.put(int.class, Types.INTEGER);
+    typeMethodMappings.put(int.class, "getInt");
     javaTypeToSqlTypeMap.put(Integer.class, Types.INTEGER);
+    typeMethodMappings.put(Integer.class, "getInt");
     javaTypeToSqlTypeMap.put(long.class, Types.BIGINT);
+    typeMethodMappings.put(long.class, "getLong");
     javaTypeToSqlTypeMap.put(Long.class, Types.BIGINT);
+    typeMethodMappings.put(Long.class, "getLong");
     javaTypeToSqlTypeMap.put(BigInteger.class, Types.BIGINT);
+    typeMethodMappings.put(BigInteger.class, "getBigDecimal");
     javaTypeToSqlTypeMap.put(float.class, Types.FLOAT);
+    typeMethodMappings.put(float.class, "getFloat");
     javaTypeToSqlTypeMap.put(Float.class, Types.FLOAT);
+    typeMethodMappings.put(Float.class, "getFloat");
     javaTypeToSqlTypeMap.put(double.class, Types.DOUBLE);
+    typeMethodMappings.put(double.class, "getDouble");
     javaTypeToSqlTypeMap.put(Double.class, Types.DOUBLE);
+    typeMethodMappings.put(Double.class, "getDouble");
     javaTypeToSqlTypeMap.put(BigDecimal.class, Types.DECIMAL);
+    typeMethodMappings.put(BigDecimal.class, "getBigDecimal");
     javaTypeToSqlTypeMap.put(java.sql.Date.class, Types.DATE);
+    typeMethodMappings.put(java.sql.Date.class, "getDate");
     javaTypeToSqlTypeMap.put(java.sql.Time.class, Types.TIME);
+    typeMethodMappings.put(java.sql.Time.class, "getTime");
     javaTypeToSqlTypeMap.put(java.sql.Timestamp.class, Types.TIMESTAMP);
+    typeMethodMappings.put(java.sql.Timestamp.class, "getTimestamp");
     javaTypeToSqlTypeMap.put(Blob.class, Types.BLOB);
+    typeMethodMappings.put(Blob.class, "getBlob");
     javaTypeToSqlTypeMap.put(Clob.class, Types.CLOB);
+    typeMethodMappings.put(Clob.class, "getClob");
+    typeMethodMappings.put(String.class, "getString");
   }
 
   /**
@@ -74,6 +98,26 @@ public class StatementCreatorUtils {
       return Types.TIMESTAMP;
     }
     return TYPE_UNKNOWN;
+  }
+
+  public static String resultSetMethod(Class<?> javaType) {
+    if (javaType == null) {
+      return null;
+    }
+    String methodName = typeMethodMappings.get(javaType);
+    if (methodName != null) {
+      return methodName;
+    }
+    if (Number.class.isAssignableFrom(javaType)) {
+      return "getLong";
+    }
+    if (isStringValue(javaType)) {
+      return "getString";
+    }
+    if (isDateValue(javaType) || Calendar.class.isAssignableFrom(javaType)) {
+      return "getDate";
+    }
+    return null;
   }
 
   private static boolean isStringValue(Class<?> paramType) {

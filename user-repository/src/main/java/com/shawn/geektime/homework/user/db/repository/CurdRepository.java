@@ -94,6 +94,7 @@ public interface CurdRepository<T, ID> {
 
   /**
    * delete a record by primary key
+   *
    * @param id
    * @return Number of successful delete
    */

@@ -41,5 +41,4 @@ public class Page<T> {
   public long getTotal() {
     return total;
   }
-
 }

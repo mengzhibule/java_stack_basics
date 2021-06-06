@@ -1,5 +1,6 @@
 package com.shawn.geektime.homework.user.db;
 
+import com.shawn.geektime.homework.user.db.entity.User;
 import java.util.List;
 import java.util.Objects;
 import org.junit.Assert;
@@ -38,7 +39,7 @@ public class JdbcTemplateTests {
   @Before
   public void test_create_connection() {
     jdbcTemplate = new JdbcTemplate();
-    jdbcTemplate.connect();
+    jdbcTemplate.connect(DRIVER_CLASS_NAME, URL, USERNAME, PASSWORD);
   }
 
   @Test

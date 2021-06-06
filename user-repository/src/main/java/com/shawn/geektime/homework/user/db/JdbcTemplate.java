@@ -6,6 +6,7 @@ import com.shawn.geektime.homework.user.db.exception.JdbcTemplateException;
 import com.shawn.geektime.homework.user.db.function.PreparedStatementCreator;
 import com.shawn.geektime.homework.user.db.util.StatementCreatorUtils;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,6 +57,17 @@ public class JdbcTemplate {
         connection = dataSource.getConnection();
       }
     } catch (SQLException e) {
+      String errorMsg = "Database connection failed, " + e.getMessage();
+      LOGGER.log(Level.SEVERE, errorMsg);
+      throw new JdbcTemplateException(errorMsg, e);
+    }
+  }
+
+  public void connect(String driverClassName, String url, String username, String password) {
+    try {
+      Class.forName(driverClassName);
+      connection = DriverManager.getConnection(url, username, password);
+    } catch (Exception e) {
       String errorMsg = "Database connection failed, " + e.getMessage();
       LOGGER.log(Level.SEVERE, errorMsg);
       throw new JdbcTemplateException(errorMsg, e);

@@ -11,8 +11,7 @@ public class User {
 
   @PrimaryKey private int id;
 
-  @Column
-  private String username;
+  @Column private String username;
 
   private String password;
 
