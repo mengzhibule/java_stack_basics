@@ -1,6 +1,6 @@
 package com.shawn.geektime.homework.user.db;
 
-import com.shawn.geektime.homework.user.db.entity.User;
+import com.shawn.geektime.homework.user.entity.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

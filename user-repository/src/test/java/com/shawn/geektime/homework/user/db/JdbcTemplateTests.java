@@ -1,6 +1,6 @@
 package com.shawn.geektime.homework.user.db;
 
-import com.shawn.geektime.homework.user.db.entity.User;
+import com.shawn.geektime.homework.user.entity.User;
 import java.util.List;
 import java.util.Objects;
 import org.junit.Assert;

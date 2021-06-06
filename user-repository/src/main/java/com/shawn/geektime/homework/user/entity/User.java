@@ -1,23 +1,27 @@
-package com.shawn.geektime.homework.user.db.entity;
+package com.shawn.geektime.homework.user.entity;
 
-import com.shawn.geektime.homework.user.db.annotation.PrimaryKey;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table
 public class User {
 
-  @PrimaryKey private int id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
   @Column private String username;
 
-  private String password;
+  @Column private String password;
 
-  private int age;
+  @Column private int age;
 
-  private String address;
+  @Column private String address;
 
   public int getId() {
     return id;

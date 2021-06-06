@@ -1,9 +1,10 @@
 package com.shawn.geektime.homework.user.db.repository;
 
-import com.shawn.geektime.homework.user.db.annotation.PrimaryKey;
-import com.shawn.geektime.homework.user.db.enums.IdGeneratePolicy;
 import java.lang.reflect.Field;
 import java.util.Objects;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 public abstract class AbstractCurdRepository<T, K> implements CurdRepository<T, K> {
 
@@ -37,10 +38,11 @@ public abstract class AbstractCurdRepository<T, K> implements CurdRepository<T, 
     builder.append(" (");
     int size = 0;
     for (Field field : fields) {
-      PrimaryKey pk = field.getAnnotation(PrimaryKey.class);
+      Id pk = field.getAnnotation(Id.class);
       if (!Objects.isNull(pk)) {
-        IdGeneratePolicy policy = pk.policy();
-        if (!policy.equals(IdGeneratePolicy.AUTO_INCREMENT)) {
+        GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
+        GenerationType strategy = generatedValue.strategy();
+        if (strategy != GenerationType.AUTO) {
           size++;
           builder.append(field.getName()).append(",");
         }

@@ -1,7 +1,7 @@
 package com.shawn.geektime.homework.user.db;
 
-import com.shawn.geektime.homework.user.db.entity.User;
 import com.shawn.geektime.homework.user.db.repository.Example;
+import com.shawn.geektime.homework.user.entity.User;
 import java.util.List;
 import org.junit.Test;
 
