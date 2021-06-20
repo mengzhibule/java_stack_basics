@@ -2,17 +2,18 @@ package com.shawn.geektime.homework.user.db.repository;
 
 import com.shawn.geektime.homework.user.db.JdbcTemplate;
 import com.shawn.geektime.homework.user.db.entity.EntityTable;
+import com.shawn.geektime.homework.user.db.entity.SqlStatementParamCreator;
 import com.shawn.geektime.homework.user.db.exception.JdbcTemplateException;
 import com.shawn.geektime.homework.user.db.util.EntityUtils;
 import com.shawn.geektime.homework.user.db.util.SQLBuilder;
 
 public abstract class DefaultCommonRepository<T, ID> implements CommonRepository<T, ID> {
 
-  private JdbcTemplate jdbcTemplate;
+  private final JdbcTemplate jdbcTemplate;
 
-  private Class<?> entityClass;
+  private final Class<?> entityClass;
 
-  private EntityTable entityTable;
+  private final EntityTable entityTable;
 
   public DefaultCommonRepository(JdbcTemplate jdbcTemplate, Class<?> entityClass) {
     this.jdbcTemplate = jdbcTemplate;
@@ -29,7 +30,14 @@ public abstract class DefaultCommonRepository<T, ID> implements CommonRepository
 
   @Override
   public int insert(T t) {
-    String sql = SQLBuilder.builder().buildInsertSQL(entityTable).getSql();
-    return jdbcTemplate.update(sql, null);
+    SqlStatementParamCreator sqlStatementParamCreator =
+        SQLBuilder.builder().buildInsertSQL(entityTable, t);
+    return jdbcTemplate.update(
+        sqlStatementParamCreator.getSql(), sqlStatementParamCreator.getParams());
+  }
+
+  @Override
+  public int delete(Example<T> t) {
+    return 0;
   }
 }

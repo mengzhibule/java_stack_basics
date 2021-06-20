@@ -1,5 +1,6 @@
 package com.shawn.geektime.homework.user.db.entity;
 
+import java.lang.reflect.Method;
 import java.sql.JDBCType;
 import javax.persistence.GenerationType;
 
@@ -7,6 +8,8 @@ public class EntityColumn {
 
   private boolean isPk;
   private String column;
+  private Method readMethod;
+  private Method writeMethod;
   private String property;
   private Class<?> javaType;
   private JDBCType jdbcType;
@@ -26,6 +29,22 @@ public class EntityColumn {
 
   public void setColumn(String column) {
     this.column = column;
+  }
+
+  public Method getReadMethod() {
+    return readMethod;
+  }
+
+  public void setReadMethod(Method readMethod) {
+    this.readMethod = readMethod;
+  }
+
+  public Method getWriteMethod() {
+    return writeMethod;
+  }
+
+  public void setWriteMethod(Method writeMethod) {
+    this.writeMethod = writeMethod;
   }
 
   public String getProperty() {

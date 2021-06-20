@@ -2,7 +2,12 @@ package com.shawn.geektime.homework.user.db.util;
 
 import com.shawn.geektime.homework.user.db.entity.EntityColumn;
 import com.shawn.geektime.homework.user.db.entity.EntityTable;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.sql.JDBCType;
 import java.util.ArrayList;
@@ -62,35 +67,94 @@ public class EntityUtils {
     }
     Field[] fields = entityClass.getDeclaredFields();
     List<EntityColumn> columns = new ArrayList<>();
-    for (Field field : fields) {
-      // exclude static and transient fields
-      if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) {
-        continue;
+
+    try {
+      BeanInfo beanInfo = Introspector.getBeanInfo(entityClass, Object.class);
+      PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+      List<PropertyMethodMapping> propertyMethodMappings = new ArrayList<>();
+      for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+        Method readMethod = propertyDescriptor.getReadMethod();
+        Method writeMethod = propertyDescriptor.getWriteMethod();
+        String name = propertyDescriptor.getName();
+        PropertyMethodMapping propertyMethodMapping = new PropertyMethodMapping();
+        propertyMethodMapping.setProperty(name);
+        propertyMethodMapping.setReadMethod(readMethod);
+        propertyMethodMapping.setWriteMethod(writeMethod);
+        propertyMethodMappings.add(propertyMethodMapping);
       }
-      EntityColumn entityColumn = new EntityColumn();
-      Column column = field.getAnnotation(Column.class);
-      String columnName;
-      if (Objects.isNull(column) || StringUtils.isBlank(column.name())) {
-        columnName = field.getName();
-      } else {
-        columnName = column.name();
-      }
-      entityColumn.setColumn(columnName);
-      entityColumn.setProperty(field.getName());
-      entityColumn.setPk(field.isAnnotationPresent(Id.class));
-      entityColumn.setJavaType(field.getType());
-      entityColumn.setJdbcType(
-          JDBCType.valueOf(StatementCreatorUtils.javaTypeToSqlParameterType(field.getType())));
-      if (field.isAnnotationPresent(Id.class)) {
-        GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
-        if (Objects.isNull(generatedValue)) {
-          entityColumn.setGenerationType(GenerationType.IDENTITY);
-        } else {
-          entityColumn.setGenerationType(generatedValue.strategy());
+      for (Field field : fields) {
+        // exclude static and transient fields
+        if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) {
+          continue;
         }
+        EntityColumn entityColumn = new EntityColumn();
+        Column column = field.getAnnotation(Column.class);
+        String columnName;
+        if (Objects.isNull(column) || StringUtils.isBlank(column.name())) {
+          columnName = field.getName();
+        } else {
+          columnName = column.name();
+        }
+        PropertyMethodMapping mapping =
+            propertyMethodMappings
+                .stream()
+                .filter(
+                    propertyMethodMapping ->
+                        propertyMethodMapping.getProperty().equals(field.getName()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(""));
+        entityColumn.setColumn(columnName);
+        entityColumn.setProperty(field.getName());
+        entityColumn.setPk(field.isAnnotationPresent(Id.class));
+        entityColumn.setJavaType(field.getType());
+        entityColumn.setReadMethod(mapping.getReadMethod());
+        entityColumn.setWriteMethod(mapping.getWriteMethod());
+        entityColumn.setJdbcType(
+            JDBCType.valueOf(StatementCreatorUtils.javaTypeToSqlParameterType(field.getType())));
+        if (field.isAnnotationPresent(Id.class)) {
+          GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
+          if (Objects.isNull(generatedValue)) {
+            entityColumn.setGenerationType(GenerationType.IDENTITY);
+          } else {
+            entityColumn.setGenerationType(generatedValue.strategy());
+          }
+        }
+        columns.add(entityColumn);
       }
-      columns.add(entityColumn);
+    } catch (IntrospectionException e) {
+      e.printStackTrace();
     }
+
     return columns;
+  }
+
+  private static class PropertyMethodMapping {
+    private String property;
+    private Method readMethod;
+    private Method writeMethod;
+
+    public String getProperty() {
+      return property;
+    }
+
+    public void setProperty(String property) {
+      this.property = property;
+    }
+
+    public Method getReadMethod() {
+      return readMethod;
+    }
+
+    public void setReadMethod(Method readMethod) {
+      this.readMethod = readMethod;
+    }
+
+    public Method getWriteMethod() {
+      return writeMethod;
+    }
+
+    public void setWriteMethod(Method writeMethod) {
+      this.writeMethod = writeMethod;
+    }
   }
 }

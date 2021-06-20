@@ -1,6 +1,7 @@
 package com.shawn.geektime.homework.user.db;
 
 import com.shawn.geektime.homework.user.db.entity.EntityTable;
+import com.shawn.geektime.homework.user.db.entity.SqlStatementParamCreator;
 import com.shawn.geektime.homework.user.db.util.EntityUtils;
 import com.shawn.geektime.homework.user.db.util.SQLBuilder;
 import com.shawn.geektime.homework.user.entity.User;
@@ -18,7 +19,13 @@ public class SQLBuilderTests {
 
   @Test
   public void test_build_insert_sql() {
-    String sql = SQLBuilder.builder().buildInsertSQL(entityTable);
+    User user = new User();
+    user.setId(1);
+    user.setUsername("Shawn");
+    user.setPassword("123456");
+    user.setAge(26);
+    user.setAddress("SHANGHAI");
+    SqlStatementParamCreator sql = SQLBuilder.builder().buildInsertSQL(entityTable, user);
     System.out.println(sql);
   }
 }

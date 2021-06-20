@@ -1,6 +1,6 @@
 package com.shawn.geektime.homework.user.db.entity;
 
-public class SqlStatementParam {
+public class SqlStatementParamCreator {
 
   private String sql;
 
